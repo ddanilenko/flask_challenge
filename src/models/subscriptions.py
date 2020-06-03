@@ -42,7 +42,7 @@ class Subscription(db.Model):
     def __repr__(self):  # pragma: no cover
         return (
             f"<{self.__class__.__name__}: {self.id} ({self.status}), "
-            f"phone_number: {self.phone_number or '[no phone number]'}, ",
+            f"phone_number: {self.phone_number or '[no phone number]'}, "
             f"plan: {self.plan_id}>"
         )
 

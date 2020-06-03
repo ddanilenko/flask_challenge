@@ -1,14 +1,11 @@
 """Celery app module"""
 from celery import Celery
-from celery.signals import task_failure, task_postrun
 from celery.utils.log import get_task_logger
-
-celery = Celery("att")
 
 logger = get_task_logger(__name__)
 
 
-def configure_celery(app):
+def create_celery_app(flask_app):
     """Configures celery app
 
     Args:
@@ -18,22 +15,20 @@ def configure_celery(app):
         object: configured celery app object
 
     """
-    celery.conf.update(app.config)
+    celery = Celery("att")
+    celery.conf.update(flask_app.config)
 
-    # subclass task base for app context
-    # http://flask.pocoo.org/docs/0.12/patterns/celery/
     TaskBase = celery.Task
 
     class AppContextTask(TaskBase):
         abstract = True
 
         def __call__(self, *args, **kwargs):
-            with app.app_context():
+            with flask_app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
 
     celery.Task = AppContextTask
 
-    # run finalize to process decorated tasks
     celery.finalize()
 
     return celery

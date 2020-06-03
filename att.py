@@ -6,8 +6,11 @@ Example::
 """
 import config
 from src import create_app
+from src.celery_app import create_celery_app
+from src.models.subscriptions_plan_versioning import SubscriptionPlanVersioning
 
 app = create_app(config.DevelopmentConfig)
+celery = create_celery_app(app)
 
 
 @app.shell_context_processor
@@ -26,4 +29,6 @@ def make_shell_context():
         "ServiceCode": ServiceCode,
         "Subscription": Subscription,
         "DataUsage": DataUsage,
+        "SubscriptionPlanVersioning": SubscriptionPlanVersioning,
+        "celery": celery,
     }
